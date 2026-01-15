@@ -8,6 +8,8 @@ from .filter import Filter
 from .evaluator import Evaluator
 from .classifier import Classifier
 from .generator import Generator
+from .content_analyzer import ContentAnalyzer
+from .kol_agent import KOLAgent
 
 __all__ = [
     'BaseModule',
@@ -16,4 +18,6 @@ __all__ = [
     'Evaluator',
     'Classifier',
     'Generator',
+    'ContentAnalyzer',
+    'KOLAgent',
 ]

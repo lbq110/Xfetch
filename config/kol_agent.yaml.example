@@ -1,0 +1,13 @@
+# KOL识别Agent配置
+llm_provider: gemini
+llm_model: gemini-2.5-flash
+gemini_api_key: your-gemini-api-key-here
+
+# 触发条件阈值
+min_followers: 100000    # 粉丝数>=10万才触发检查
+max_pass_rate: 0.3       # 通过率<=30%才触发检查
+max_tweets: 10           # 样本数<=10条才触发检查（样本不足）
+
+# 说明：
+# 同时满足以上3个条件时，才会触发KOL识别
+# 这样可以避免对大量普通博主进行不必要的检查

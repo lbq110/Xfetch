@@ -132,7 +132,7 @@ class Pipeline:
         """
         return self.analyzer.get_author_report(min_tweets)
 
-    def print_author_report(self, min_tweets: int = 3):
+    def print_author_report(self, min_tweets: int = 5):
         """打印博主质量报告"""
         report = self.get_author_report(min_tweets)
 
@@ -144,6 +144,7 @@ class Pipeline:
         print(f"  总博主数: {report['summary']['total_authors']}")
         print(f"  高质量博主: {report['summary']['high_quality_count']}")
         print(f"  低质量博主: {report['summary']['low_quality_count']}")
+        print(f"  KOL识别数: {report['summary'].get('identified_kols_count', 0)}")
         print(f"  建议移除: {report['summary']['recommend_remove_count']}")
 
         if report['high_quality_authors']:
@@ -151,6 +152,14 @@ class Pipeline:
             for author in report['high_quality_authors'][:10]:
                 print(f"  @{author['username']:20} 通过率:{author['pass_rate']:.0%} "
                       f"平均分:{author['avg_score']:.1f} ({author['total_tweets']}条)")
+
+        if report.get('identified_kols'):
+            print(f"\n🔍 KOL识别结果:")
+            for kol in report['identified_kols']:
+                status = "✓ 重要KOL" if kol['is_important_kol'] else "? 待观察"
+                print(f"  @{kol['username']:20} [{status}] {kol['reason']}")
+                if kol['background']:
+                    print(f"    背景: {kol['background'][:60]}...")
 
         if report['recommend_remove']:
             print(f"\n⚠️ 建议移除的博主 (通过率≤30% 且近期评分低):")
