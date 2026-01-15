@@ -1,0 +1,13 @@
+# 内容分析模块配置 (合并Filter+Evaluator)
+llm_provider: gemini
+llm_model: gemini-2.5-flash
+gemini_api_key: YOUR_GEMINI_API_KEY
+
+# 价值阈值 (1-10)，低于此分数的推文将被过滤
+value_threshold: 5
+
+# 博主统计配置
+author_stats:
+  min_tweets_for_report: 3
+  remove_threshold: 0.3
+  high_quality_threshold: 0.7

@@ -1,0 +1,4 @@
+# 抓取模块配置
+list_id: YOUR_TWITTER_LIST_ID    # Twitter List ID
+max_tweets_per_run: 10           # 每次最多抓取数量
+db_path: accounts.db             # Twitter 账户数据库

@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Virtual environments
+venv/
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Data files (contain personal tweets)
+data/raw/
+data/filtered/
+data/evaluated/
+data/classified/
+data/rejected/
+data/output/
+data/analysis/
+data/state.json
+data/author_stats.json
+data/processed_ids.json
+
+# Config with secrets (use .example versions)
+config/fetcher.yaml
+config/filter.yaml
+config/evaluator.yaml
+config/classifier.yaml
+config/content_analyzer.yaml
+config/generator.yaml
+config/pipeline_evaluator.yaml
+
+# Database with Twitter credentials
+*.db
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# twscrape submodule data
+twscrape/.git
+.claude/

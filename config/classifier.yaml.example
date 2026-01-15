@@ -1,0 +1,60 @@
+# 分类模块配置
+llm_provider: gemini
+llm_model: gemini-2.5-flash
+gemini_api_key: YOUR_GEMINI_API_KEY
+
+# 分类体系
+categories:
+  - name: 时闻
+    emoji: "🔥"
+    description: AI领域的最新新闻、产品发布、重大事件
+    sub_categories:
+      - 产品发布
+      - 融资新闻
+      - 行业动态
+      - 政策法规
+
+  - name: 深度解析
+    emoji: "💡"
+    description: 对AI技术、趋势的深入分析和思考
+    sub_categories:
+      - 技术分析
+      - 趋势预测
+      - 行业观察
+      - 专家观点
+
+  - name: 技术技巧
+    emoji: "🛠"
+    description: 实用的AI工具使用技巧、代码教程
+    sub_categories:
+      - Prompt技巧
+      - 工具教程
+      - 代码示例
+      - 最佳实践
+
+  - name: 学术研究
+    emoji: "📚"
+    description: AI学术论文、研究成果
+    sub_categories:
+      - 论文解读
+      - 研究突破
+      - 算法创新
+      - 开源项目
+
+  - name: 产品应用
+    emoji: "🎯"
+    description: AI产品的实际应用案例和体验
+    sub_categories:
+      - 产品体验
+      - 应用案例
+      - 效率工具
+      - 创意应用
+
+  - name: 商业洞察
+    emoji: "💼"
+    description: AI商业模式、市场分析、投资机会
+    sub_categories:
+      - 商业模式
+      - 市场分析
+      - 投资动态
+      - 创业机会

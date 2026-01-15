@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling>=1.9.1"]
+build-backend = "hatchling.build"
+
+[project]
+name = "twscrape"
+version = "0.17.0"
+authors = [{ name = "vladkens", email = "v.pronsky@gmail.com" }]
+description = "Twitter GraphQL and Search API implementation with SNScrape data models"
+readme = "readme.md"
+requires-python = ">=3.10"
+keywords = ["twitter", "scrape", "scrapper", "api", "snscrape"]
+license = { text = "MIT" }
+classifiers = [
+  'Development Status :: 4 - Beta',
+  'License :: OSI Approved :: MIT License',
+  'Programming Language :: Python :: 3.10',
+  'Programming Language :: Python :: 3.11',
+  'Programming Language :: Python :: 3.12',
+  'Programming Language :: Python :: 3.13',
+]
+dependencies = [
+  "aiosqlite>=0.17.0",
+  "fake-useragent>=1.4.0",
+  "httpx>=0.26.0",
+  "loguru>=0.7.0",
+  "pyotp>=2.9.0",
+  "beautifulsoup4>=4.13.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2.2",
+  "pyright>=1.1.369",
+  "pytest-asyncio>=0.23.3",
+  "pytest-cov>=4.1.0",
+  "pytest-httpx>=0.28.0",
+  "pytest>=7.4.4",
+  "ruff>=0.1.11",
+]
+
+[project.urls]
+repository = "https://github.com/vladkens/twscrape"
+
+[project.scripts]
+twscrape = "twscrape.cli:run"
+
+[tool.setuptools]
+packages = ['twscrape']
+
+[tool.hatch.build.targets.wheel]
+packages = ["twscrape"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.ruff]
+line-length = 99
+
+[tool.ruff.lint]
+ignore = ["E501"]
