@@ -1,0 +1,682 @@
+/**
+ * 精灵图动画系统
+ * Xfetch Pixel Studio
+ */
+
+/* ===== 基础精灵类 ===== */
+.sprite {
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* ===== 背景场景 ===== */
+.game-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('../assets/background.png');
+    background-size: cover;
+    background-position: center bottom;
+    z-index: 0;
+}
+
+/* ===== 小人精灵 (CSS绘制版本) ===== */
+.sprite-person {
+    width: 28px;
+    height: 48px;
+    position: relative;
+}
+
+/* 小人身体 - CSS绘制 */
+.sprite-person::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 4px;
+    width: 20px;
+    height: 24px;
+    background: var(--person-color, #3498db);
+    border: 2px solid rgba(0,0,0,0.3);
+    border-radius: 4px 4px 0 0;
+}
+
+/* 小人腿部 */
+.sprite-person::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 6px;
+    width: 6px;
+    height: 10px;
+    background: #2c3e50;
+    border-radius: 0 0 2px 2px;
+    box-shadow: 10px 0 0 #2c3e50;
+}
+
+/* 小人变体 - 不同颜色衣服 */
+.sprite-person[data-variant="1"] { --person-color: #3498db; }
+.sprite-person[data-variant="2"] { --person-color: #e74c3c; }
+.sprite-person[data-variant="3"] { --person-color: #2ecc71; }
+.sprite-person[data-variant="4"] { --person-color: #9b59b6; }
+.sprite-person[data-variant="5"] { --person-color: #f39c12; }
+.sprite-person[data-variant="6"] { --person-color: #1abc9c; }
+.sprite-person[data-variant="7"] { --person-color: #e91e63; }
+.sprite-person[data-variant="8"] { --person-color: #00bcd4; }
+.sprite-person[data-variant="9"] { --person-color: #ff5722; }
+.sprite-person[data-variant="10"] { --person-color: #607d8b; }
+.sprite-person[data-variant="11"] { --person-color: #795548; }
+
+/* 小人待机动画 */
+.sprite-person.idle {
+    animation: person-breathe 1.2s ease-in-out infinite;
+}
+
+@keyframes person-breathe {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.97); }
+}
+
+/* 小人走路动画 */
+.sprite-person.walking {
+    animation: person-walk 0.4s steps(1) infinite;
+}
+
+@keyframes person-walk {
+    0% { transform: translateY(0); }
+    25% { transform: translateY(-2px); }
+    50% { transform: translateY(0); }
+    75% { transform: translateY(-2px); }
+}
+
+/* 小人跳跃 */
+.sprite-person.jumping {
+    animation: person-jump 0.3s ease-out forwards;
+}
+
+@keyframes person-jump {
+    0% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.1); }
+    100% { transform: translateY(-50px) scale(0.9); opacity: 0; }
+}
+
+/* 小人被拒绝 - 变灰消散 */
+.sprite-person.rejected {
+    --person-color: #888 !important;
+    animation: person-reject 0.6s ease-out forwards;
+    filter: grayscale(100%);
+}
+
+@keyframes person-reject {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(0.95); }
+    100% { opacity: 0; transform: scale(0.5); }
+}
+
+/* 小人高兴/通过 */
+.sprite-person.happy {
+    animation: person-happy 0.5s ease-out;
+}
+
+@keyframes person-happy {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(-8px); }
+    50% { transform: translateY(-4px); }
+    75% { transform: translateY(-6px); }
+}
+
+/* 头像覆盖层 */
+.sprite-person .avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #333;
+    background: #ffcc99;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.sprite-person .avatar-overlay img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    image-rendering: pixelated;
+}
+
+/* ===== 审核员NPC (CSS绘制版本) ===== */
+.sprite-conductor {
+    width: 32px;
+    height: 56px;
+    position: relative;
+}
+
+/* 审核员帽子 */
+.sprite-conductor::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 4px;
+    width: 24px;
+    height: 10px;
+    background: #e94560;
+    border: 2px solid #333;
+    border-radius: 4px 4px 0 0;
+}
+
+/* 审核员身体 */
+.sprite-conductor::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 6px;
+    width: 20px;
+    height: 28px;
+    background: linear-gradient(180deg, #ffcc99 0%, #ffcc99 30%, #e94560 30%, #e94560 100%);
+    border: 2px solid #333;
+    border-radius: 4px;
+}
+
+/* 审核员待机 */
+.sprite-conductor.idle {
+    animation: conductor-breathe 1.5s ease-in-out infinite;
+}
+
+@keyframes conductor-breathe {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.98); }
+}
+
+/* 审核员盖章动画 */
+.sprite-conductor.stamping {
+    animation: conductor-stamp-action 0.6s ease-out forwards;
+}
+
+@keyframes conductor-stamp-action {
+    0% { transform: translateY(0); }
+    30% { transform: translateY(-8px); }
+    60% { transform: translateY(2px); }
+    100% { transform: translateY(0); }
+}
+
+/* ===== 大巴车 (CSS绘制版本) ===== */
+.sprite-bus {
+    position: relative;
+    width: 220px;
+    height: 100px;
+}
+
+/* 大巴车身 - CSS绘制 */
+.sprite-bus .bus-body {
+    width: 200px;
+    height: 70px;
+    background: linear-gradient(180deg, #ffd93d 0%, #f0c020 100%);
+    border: 3px solid #333;
+    border-radius: 8px 8px 4px 4px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+}
+
+/* 大巴车顶 */
+.sprite-bus .bus-body::before {
+    content: 'TWEET BUS';
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1da1f2;
+    color: #fff;
+    font-size: 8px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 2px solid #333;
+    white-space: nowrap;
+}
+
+/* 大巴车窗背景 */
+.sprite-bus .bus-body::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    right: 40px;
+    height: 30px;
+    background: linear-gradient(180deg, #a8e6ff 0%, #87ceeb 100%);
+    border: 2px solid #333;
+    border-radius: 4px;
+}
+
+/* 车轮 */
+.sprite-bus .wheel {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: radial-gradient(circle, #555 0%, #222 100%);
+    border-radius: 50%;
+    border: 3px solid #444;
+    z-index: 3;
+    bottom: 0;
+}
+
+.sprite-bus .wheel::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: #888;
+    border-radius: 50%;
+}
+
+.sprite-bus .wheel-front {
+    left: 25px;
+}
+
+.sprite-bus .wheel-back {
+    right: 25px;
+}
+
+/* 车轮转动动画 */
+.sprite-bus.driving .wheel {
+    animation: wheel-spin 0.3s linear infinite;
+}
+
+@keyframes wheel-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 大巴待机呼吸 */
+.sprite-bus.idle {
+    animation: bus-breathe 2s ease-in-out infinite;
+}
+
+@keyframes bus-breathe {
+    0%, 100% { transform: scaleY(1) translateY(0); }
+    50% { transform: scaleY(0.98) translateY(2px); }
+}
+
+/* 大巴行驶颠簸 */
+.sprite-bus.driving {
+    animation: bus-bounce 0.2s ease-in-out infinite;
+}
+
+@keyframes bus-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-3px) rotate(-0.5deg); }
+    75% { transform: translateY(-2px) rotate(0.5deg); }
+}
+
+/* 大巴窗户区域 - 放置乘客头像 */
+.sprite-bus .bus-windows {
+    position: absolute;
+    top: 18px;
+    left: 20px;
+    width: 130px;
+    height: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 2px;
+    overflow: hidden;
+    z-index: 4;
+    /* 覆盖旧样式 */
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    right: auto !important;
+}
+
+/* 窗户里的乘客头像 */
+.sprite-bus .passenger-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.3);
+}
+
+.sprite-bus .passenger-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 脸贴玻璃效果 */
+.sprite-bus .passenger-avatar.pressed {
+    transform: scaleX(1.2) scaleY(0.85);
+    filter: brightness(1.1);
+}
+
+/* ===== 建筑 ===== */
+.sprite-building {
+    background-image: url('../assets/buildings.png');
+    background-size: 800px 436px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    transition: transform 0.1s, filter 0.3s;
+}
+
+.sprite-building:hover {
+    transform: scale(1.05);
+}
+
+/* 建筑激活发光 */
+.sprite-building.active {
+    filter: brightness(1.3) drop-shadow(0 0 10px currentColor);
+    animation: building-glow 0.5s ease-out;
+}
+
+@keyframes building-glow {
+    0% { filter: brightness(2) drop-shadow(0 0 20px currentColor); }
+    100% { filter: brightness(1.3) drop-shadow(0 0 10px currentColor); }
+}
+
+/* 各建筑定位 */
+.sprite-building[data-type="deep"] {
+    width: 120px;
+    height: 220px;
+    background-position: -320px 0;
+    --building-color: #4d96ff;
+}
+
+.sprite-building[data-type="lab"] {
+    width: 120px;
+    height: 220px;
+    background-position: -450px 0;
+    --building-color: #9d4edd;
+}
+
+.sprite-building[data-type="app"] {
+    width: 120px;
+    height: 220px;
+    background-position: -580px 0;
+    --building-color: #ffd93d;
+}
+
+.sprite-building[data-type="tech"] {
+    width: 120px;
+    height: 200px;
+    background-position: -320px -230px;
+    --building-color: #4d96ff;
+}
+
+.sprite-building[data-type="tips"] {
+    width: 120px;
+    height: 200px;
+    background-position: -450px -230px;
+    --building-color: #f472b6;
+}
+
+.sprite-building[data-type="biz"] {
+    width: 120px;
+    height: 200px;
+    background-position: -580px -230px;
+    --building-color: #ffd93d;
+}
+
+/* 公交站台 */
+.sprite-bus-stop {
+    width: 200px;
+    height: 150px;
+    background-image: url('../assets/buildings.png');
+    background-size: 800px 436px;
+    background-position: 0 -220px;
+}
+
+/* ===== 图标精灵 ===== */
+.sprite-icon {
+    background-image: url('../assets/sprite-sheet-main.png');
+    background-size: 1200px 669px;
+    display: inline-block;
+}
+
+.sprite-icon.check {
+    width: 30px;
+    height: 30px;
+    background-position: -170px -380px;
+}
+
+.sprite-icon.cross {
+    width: 30px;
+    height: 30px;
+    background-position: -210px -380px;
+}
+
+.sprite-icon.heart {
+    width: 30px;
+    height: 30px;
+    background-position: -130px -380px;
+}
+
+/* 图标弹出动画 */
+.sprite-icon.pop {
+    animation: icon-pop 0.5s ease-out forwards;
+}
+
+@keyframes icon-pop {
+    0% { transform: scale(0) translateY(0); opacity: 0; }
+    50% { transform: scale(1.3) translateY(-20px); opacity: 1; }
+    100% { transform: scale(1) translateY(-30px); opacity: 0; }
+}
+
+/* ===== 气泡 ===== */
+.sprite-bubble {
+    background-image: url('../assets/sprite-sheet-main.png');
+    background-size: 1200px 669px;
+    position: absolute;
+    animation: bubble-float 0.8s ease-out forwards;
+}
+
+.sprite-bubble.ding {
+    width: 50px;
+    height: 30px;
+    background-position: -130px -200px;
+}
+
+.sprite-bubble.rumble {
+    width: 70px;
+    height: 30px;
+    background-position: -190px -200px;
+}
+
+.sprite-bubble.pop {
+    width: 45px;
+    height: 30px;
+    background-position: -270px -200px;
+}
+
+@keyframes bubble-float {
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    20% { transform: translateY(-10px) scale(1.1); opacity: 1; }
+    80% { transform: translateY(-30px) scale(1); opacity: 1; }
+    100% { transform: translateY(-40px) scale(0.8); opacity: 0; }
+}
+
+/* ===== 特效 ===== */
+
+/* 烟雾消散 */
+.sprite-smoke {
+    width: 50px;
+    height: 60px;
+    background-image: url('../assets/sprite-sheet-main.png');
+    background-size: 1200px 669px;
+    animation: smoke-dissipate 0.6s steps(4) forwards;
+}
+
+@keyframes smoke-dissipate {
+    0% { background-position: -350px -380px; opacity: 1; }
+    25% { background-position: -400px -380px; opacity: 0.8; }
+    50% { background-position: -450px -380px; opacity: 0.6; }
+    75% { background-position: -500px -380px; opacity: 0.4; }
+    100% { background-position: -500px -380px; opacity: 0; }
+}
+
+/* 灰尘特效 */
+.sprite-dust {
+    width: 40px;
+    height: 30px;
+    background-image: url('../assets/sprite-sheet-main.png');
+    background-size: 1200px 669px;
+    background-position: -260px -380px;
+    animation: dust-puff 0.4s ease-out forwards;
+}
+
+@keyframes dust-puff {
+    0% { transform: scale(0.5); opacity: 0; }
+    30% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1.5) translateY(-10px); opacity: 0; }
+}
+
+/* ===== 引导线 ===== */
+.guide-line {
+    position: absolute;
+    height: 8px;
+    border-radius: 4px;
+    opacity: 0.3;
+    transition: opacity 0.3s, box-shadow 0.3s;
+}
+
+.guide-line.blue {
+    background: linear-gradient(90deg, transparent, #4d96ff, #4d96ff, transparent);
+}
+
+.guide-line.pink {
+    background: linear-gradient(90deg, transparent, #f472b6, #f472b6, transparent);
+}
+
+.guide-line.yellow {
+    background: linear-gradient(90deg, transparent, #ffd93d, #ffd93d, transparent);
+}
+
+/* 引导线激活状态 */
+.guide-line.active {
+    opacity: 1;
+    animation: guideline-glow 0.5s ease-in-out infinite alternate;
+}
+
+.guide-line.blue.active {
+    box-shadow: 0 0 15px #4d96ff, 0 0 30px #4d96ff;
+}
+
+.guide-line.pink.active {
+    box-shadow: 0 0 15px #f472b6, 0 0 30px #f472b6;
+}
+
+.guide-line.yellow.active {
+    box-shadow: 0 0 15px #ffd93d, 0 0 30px #ffd93d;
+}
+
+@keyframes guideline-glow {
+    from { opacity: 0.8; }
+    to { opacity: 1; }
+}
+
+/* ===== UI面板 ===== */
+.ui-panel {
+    background-image: url('../assets/sprite-sheet-main.png');
+    background-size: 1200px 669px;
+    image-rendering: pixelated;
+}
+
+.ui-panel.review-stop {
+    width: 150px;
+    height: 80px;
+    background-position: -240px 0;
+}
+
+.ui-panel.sorting-hub {
+    width: 150px;
+    height: 80px;
+    background-position: -400px 0;
+}
+
+.ui-panel.review-queue {
+    width: 150px;
+    height: 70px;
+    background-position: -240px -85px;
+}
+
+.ui-panel.sorting-stats {
+    width: 180px;
+    height: 70px;
+    background-position: -400px -85px;
+}
+
+/* ===== 分类徽章 ===== */
+.category-badge {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 2px solid rgba(0,0,0,0.3);
+}
+
+.category-badge.news { background: #ff6b6b; }
+.category-badge.deep { background: #4d96ff; }
+.category-badge.tips { background: #f472b6; }
+.category-badge.lab { background: #9d4edd; }
+.category-badge.app { background: #6bcb77; }
+.category-badge.biz { background: #ffd93d; color: #333; }
+
+/* ===== 汗滴/震动特效 ===== */
+.sweat-drop {
+    width: 12px;
+    height: 16px;
+    background: linear-gradient(180deg, #87ceeb 0%, #4fc3f7 100%);
+    border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+    position: absolute;
+    animation: sweat-fall 0.6s ease-in forwards;
+}
+
+@keyframes sweat-fall {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(30px) scale(0.5); opacity: 0; }
+}
+
+/* 震动线 */
+.shake-line {
+    width: 15px;
+    height: 3px;
+    background: #333;
+    border-radius: 2px;
+    position: absolute;
+    animation: shake-appear 0.3s ease-out forwards;
+}
+
+@keyframes shake-appear {
+    0% { transform: scaleX(0); opacity: 0; }
+    50% { transform: scaleX(1.2); opacity: 1; }
+    100% { transform: scaleX(0); opacity: 0; }
+}
+
+/* ===== 爆米花特效 ===== */
+.popcorn {
+    width: 30px;
+    height: 40px;
+    background-image: url('../assets/sprite-sheet-main.png');
+    background-size: 1200px 669px;
+    background-position: -950px -350px;
+    position: absolute;
+    animation: popcorn-pop 0.8s ease-out forwards;
+}
+
+@keyframes popcorn-pop {
+    0% { transform: translateY(0) rotate(0deg) scale(0); opacity: 0; }
+    30% { transform: translateY(-50px) rotate(-20deg) scale(1.2); opacity: 1; }
+    60% { transform: translateY(-30px) rotate(10deg) scale(1); opacity: 1; }
+    100% { transform: translateY(20px) rotate(-5deg) scale(0.8); opacity: 0; }
+}

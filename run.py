@@ -32,10 +32,16 @@ def main():
         default=3,
         help='博主报告的最小推文数（默认3）'
     )
+    parser.add_argument(
+        '--emit-events',
+        action='store_true',
+        help='启用事件输出（用于可视化前端）'
+    )
 
     args = parser.parse_args()
 
-    pipeline = Pipeline()
+    # 创建 Pipeline，传入 emit_events 参数
+    pipeline = Pipeline(emit_events=args.emit_events)
 
     if args.author_report:
         pipeline.print_author_report(args.min_tweets)

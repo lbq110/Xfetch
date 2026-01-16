@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xfetch History</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/pixel-base.css">
+    <style>
+        body {
+            padding: 24px;
+        }
+
+        .page-title {
+            font-size: 16px;
+            color: var(--accent-primary);
+            text-align: center;
+            margin-bottom: 24px;
+            text-shadow: 2px 2px 0 var(--bg-dark);
+        }
+
+        .history-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .history-item {
+            background: var(--bg-medium);
+            border: 2px solid var(--bg-light);
+            margin-bottom: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .history-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(4px);
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .history-date {
+            font-size: 10px;
+            color: var(--accent-secondary);
+        }
+
+        .history-status {
+            font-size: 8px;
+            padding: 4px 8px;
+            border-radius: 2px;
+        }
+
+        .history-status.success {
+            background: var(--cat-tips);
+            color: #000;
+        }
+
+        .history-status.error {
+            background: var(--cat-news);
+            color: #000;
+        }
+
+        .history-stats {
+            display: flex;
+            gap: 24px;
+            font-size: 8px;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            color: var(--text-primary);
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-secondary);
+            text-decoration: none;
+            font-size: 8px;
+        }
+
+        .back-link:hover {
+            color: var(--accent-primary);
+        }
+
+        .upload-section {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid var(--bg-light);
+        }
+
+        .upload-section p {
+            font-size: 8px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">&lt; BACK TO STUDIO</a>
+
+    <h1 class="page-title">RUN HISTORY</h1>
+
+    <div class="history-container">
+        <div id="history-list">
+            <div class="empty-state">
+                <div class="icon">📂</div>
+                <p>No history files found.</p>
+                <p>Run the pipeline with --emit-events to generate event files.</p>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <p>Or upload an event file manually:</p>
+            <button class="pixel-btn" id="btn-upload">UPLOAD .JSONL</button>
+        </div>
+    </div>
+
+    <script>
+        // 上传文件并跳转到主页播放
+        document.getElementById('btn-upload')?.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.jsonl';
+
+            input.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // 将文件内容存储到 localStorage
+                try {
+                    const text = await file.text();
+                    localStorage.setItem('xfetch_events', text);
+                    localStorage.setItem('xfetch_events_name', file.name);
+
+                    // 跳转到主页
+                    window.location.href = 'index.html?autoplay=1';
+                } catch (error) {
+                    alert('Failed to read file');
+                }
+            });
+
+            input.click();
+        });
+
+        // 尝试从 events 目录加载历史（需要服务端支持）
+        async function loadHistory() {
+            try {
+                const response = await fetch('../data/events/index.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    renderHistory(data.files || []);
+                }
+            } catch (e) {
+                console.log('No history index found');
+            }
+        }
+
+        function renderHistory(files) {
+            const container = document.getElementById('history-list');
+            if (!container || files.length === 0) return;
+
+            container.innerHTML = files.map(file => `
+                <div class="history-item" data-file="${file.name}">
+                    <div class="history-header">
+                        <span class="history-date">${file.date || file.name}</span>
+                        <span class="history-status ${file.status || 'success'}">${file.status || 'SUCCESS'}</span>
+                    </div>
+                    <div class="history-stats">
+                        <div class="stat">
+                            <span class="stat-label">TWEETS</span>
+                            <span class="stat-value">${file.total || '--'}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">PASSED</span>
+                            <span class="stat-value">${file.passed || '--'}</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label">DURATION</span>
+                            <span class="stat-value">${file.duration || '--'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // 绑定点击事件
+            container.querySelectorAll('.history-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const fileName = item.dataset.file;
+                    window.location.href = `index.html?file=${encodeURIComponent(fileName)}`;
+                });
+            });
+        }
+
+        loadHistory();
+    </script>
+</body>
+</html>

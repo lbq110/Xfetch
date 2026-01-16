@@ -1,0 +1,516 @@
+/* 动画关键帧定义 */
+
+/* === 小人动画 === */
+
+/* 站立呼吸 */
+@keyframes idle-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+/* 行走动画 */
+@keyframes walk {
+    0%, 100% {
+        transform: translateX(0) translateY(0);
+    }
+    25% {
+        transform: translateX(2px) translateY(-2px);
+    }
+    50% {
+        transform: translateX(4px) translateY(0);
+    }
+    75% {
+        transform: translateX(6px) translateY(-2px);
+    }
+}
+
+/* 跳跃上车 */
+@keyframes jump-in {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    40% {
+        transform: translateY(-30px) scale(1.1);
+        opacity: 1;
+    }
+    70% {
+        transform: translateY(-20px) translateX(30px) scale(0.8);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translateY(0) translateX(50px) scale(0);
+        opacity: 0;
+    }
+}
+
+/* 拒绝消散 */
+@keyframes reject-poof {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        filter: grayscale(0);
+    }
+    30% {
+        transform: scale(1.2);
+        filter: grayscale(100%);
+    }
+    100% {
+        transform: scale(0) rotate(180deg);
+        opacity: 0;
+        filter: grayscale(100%);
+    }
+}
+
+/* 爆米花弹出 */
+@keyframes popcorn-out {
+    0% {
+        transform: translateY(0) translateX(0) scale(0);
+        opacity: 0;
+    }
+    20% {
+        transform: translateY(var(--pop-y, -50px)) translateX(var(--pop-x, 0)) scale(1.2);
+        opacity: 1;
+    }
+    40% {
+        transform: translateY(calc(var(--pop-y, -50px) * 0.5)) translateX(calc(var(--pop-x, 0) * 1.5)) scale(1);
+    }
+    100% {
+        transform: translateY(0) translateX(var(--target-x, 100px)) scale(1);
+        opacity: 1;
+    }
+}
+
+/* 跑向建筑 */
+@keyframes run-to-building {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(var(--run-distance, 100px));
+    }
+}
+
+/* 进入建筑消失 */
+@keyframes enter-building {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(0.8) translateY(10px);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(0) translateY(20px);
+        opacity: 0;
+    }
+}
+
+/* 通过时头顶爱心 */
+@keyframes heart-pop {
+    0% {
+        transform: scale(0) translateY(0);
+        opacity: 0;
+    }
+    30% {
+        transform: scale(1.3) translateY(-10px);
+        opacity: 1;
+    }
+    60% {
+        transform: scale(1) translateY(-20px);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.8) translateY(-30px);
+        opacity: 0;
+    }
+}
+
+/* === 大巴动画 === */
+
+/* 呼吸起伏 */
+@keyframes bus-breathe {
+    0%, 100% {
+        transform: scaleY(1) translateY(0);
+    }
+    50% {
+        transform: scaleY(0.98) translateY(1px);
+    }
+}
+
+/* 超载抖动 */
+@keyframes bus-shake {
+    0%, 100% {
+        transform: translateX(0) rotate(0deg);
+    }
+    25% {
+        transform: translateX(-3px) rotate(-1deg);
+    }
+    50% {
+        transform: translateX(0) rotate(0deg);
+    }
+    75% {
+        transform: translateX(3px) rotate(1deg);
+    }
+}
+
+/* 超载下沉 */
+@keyframes bus-sink {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(4px);
+    }
+}
+
+/* 行驶动画 */
+@keyframes bus-drive {
+    0% {
+        transform: translateX(-200px);
+    }
+    100% {
+        transform: translateX(calc(100vw + 200px));
+    }
+}
+
+/* 轮子转动 */
+@keyframes wheel-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 门开关 */
+@keyframes door-open {
+    0% {
+        transform: scaleX(1);
+    }
+    100% {
+        transform: scaleX(0);
+    }
+}
+
+/* 窗内头像挤压 */
+@keyframes squish-in-window {
+    0% {
+        transform: scale(0) translateY(20px);
+    }
+    60% {
+        transform: scale(1.2) translateY(-5px);
+    }
+    80% {
+        transform: scale(0.9) translateY(2px);
+    }
+    100% {
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* 贴玻璃效果 */
+@keyframes press-glass {
+    0%, 100% {
+        transform: scaleX(1) scaleY(1);
+    }
+    50% {
+        transform: scaleX(1.2) scaleY(0.9);
+    }
+}
+
+/* === 建筑动画 === */
+
+/* 建筑闪烁 */
+@keyframes building-glow {
+    0% {
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    }
+    100% {
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+/* 建筑接收弹跳 */
+@keyframes building-bounce {
+    0%, 100% {
+        transform: scaleY(1);
+    }
+    30% {
+        transform: scaleY(0.95);
+    }
+    60% {
+        transform: scaleY(1.02);
+    }
+}
+
+/* 门开动画 */
+@keyframes door-slide {
+    0% {
+        height: 100%;
+    }
+    100% {
+        height: 0%;
+    }
+}
+
+/* === 界面动画 === */
+
+/* 数字滚动 */
+@keyframes number-roll {
+    0% {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* 进度条脉冲 */
+@keyframes progress-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* 场景切换 */
+@keyframes scene-slide-in {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes scene-slide-out {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+}
+
+/* 像素烟雾 */
+@keyframes pixel-smoke {
+    0% {
+        transform: scale(1) translateY(0);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(2) translateY(-20px);
+        opacity: 0;
+    }
+}
+
+/* 星星闪烁（通过特效） */
+@keyframes star-twinkle {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 路线发光 */
+@keyframes line-glow {
+    0% {
+        stroke-opacity: 0.3;
+    }
+    50% {
+        stroke-opacity: 1;
+    }
+    100% {
+        stroke-opacity: 0.3;
+    }
+}
+
+/* === 动画应用类 === */
+
+.anim-idle {
+    animation: idle-bounce 1s ease-in-out infinite;
+}
+
+.anim-walk {
+    animation: walk 0.4s steps(4) infinite;
+}
+
+.anim-jump-in {
+    animation: jump-in 0.6s ease-out forwards;
+}
+
+.anim-reject {
+    animation: reject-poof 0.5s ease-out forwards;
+}
+
+.anim-popcorn {
+    animation: popcorn-out 0.8s ease-out forwards;
+}
+
+.anim-run {
+    animation: run-to-building 1s ease-in-out forwards;
+}
+
+.anim-enter {
+    animation: enter-building 0.3s ease-in forwards;
+}
+
+.anim-heart {
+    animation: heart-pop 0.8s ease-out forwards;
+}
+
+.bus.anim-breathe {
+    animation: bus-breathe 2s ease-in-out infinite;
+}
+
+.bus.anim-shake {
+    animation: bus-shake 0.3s ease-in-out infinite, bus-sink 0.6s ease-in-out infinite;
+}
+
+.bus.anim-drive {
+    animation: bus-drive 20s linear forwards;
+}
+
+.wheel.anim-spin {
+    animation: wheel-spin 0.5s linear infinite;
+}
+
+.bus-door.anim-open {
+    animation: door-open 0.3s ease-out forwards;
+}
+
+.avatar-window.anim-squish {
+    animation: squish-in-window 0.4s ease-out forwards;
+}
+
+.avatar-window.anim-press {
+    animation: press-glass 2s ease-in-out infinite;
+}
+
+.building.anim-glow {
+    animation: building-glow 0.5s ease-out;
+}
+
+.building.anim-bounce {
+    animation: building-bounce 0.3s ease-out;
+}
+
+.progress-fill.anim-pulse {
+    animation: progress-pulse 1s ease-in-out infinite;
+}
+
+/* 像素烟雾粒子 */
+.smoke-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--text-secondary);
+    animation: pixel-smoke 0.5s ease-out forwards;
+}
+
+/* 心形特效 */
+.heart-effect {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    color: var(--accent-primary);
+    font-size: 12px;
+    animation: heart-pop 0.8s ease-out forwards;
+    pointer-events: none;
+}
+
+/* 绿色勾选特效 */
+.check-effect {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    color: var(--cat-tips);
+    font-size: 12px;
+    animation: heart-pop 0.8s ease-out forwards;
+    pointer-events: none;
+}
+
+/* === 单一视图中的额外动画 === */
+
+/* 大巴行驶中抖动 (单一视图) */
+.bus.driving {
+    animation: bus-shake 0.15s ease-in-out infinite;
+}
+
+/* 道路快速滚动 */
+.road.fast .road-line {
+    animation: road-scroll 0.5s linear infinite !important;
+}
+
+/* 建筑接收闪烁 */
+.building.receiving {
+    animation: building-glow 0.5s ease-out, building-bounce 0.3s ease-out;
+}
+
+.building.receiving .building-roof {
+    filter: brightness(1.3);
+}
+
+.building.receiving .building-body {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+/* === 小人状态动画 === */
+
+/* 审核中 - 高亮闪烁 */
+.pixel-person.reviewing {
+    animation: idle-bounce 0.5s ease-in-out infinite !important;
+    filter: brightness(1.2);
+    z-index: 50;
+}
+
+/* 通过 - 跳跃上车 */
+.pixel-person.jumping {
+    animation: jump-in 0.5s ease-out forwards !important;
+    transition: none !important;
+}
+
+/* 拒绝 - 变灰消散 */
+.pixel-person.rejected {
+    animation: reject-poof 0.6s ease-out forwards !important;
+    transition: none !important;
+}
+
+/* 爆米花弹出 */
+.pixel-person.popping {
+    animation: popcorn-out 0.15s ease-out forwards !important;
+    transition: none !important;
+}
+
+/* 跑向建筑 */
+.pixel-person.running {
+    animation: walk 0.2s steps(4) infinite !important;
+}
+
+/* 进入建筑 */
+.pixel-person.entering {
+    animation: enter-building 0.15s ease-in forwards !important;
+    transition: none !important;
+}

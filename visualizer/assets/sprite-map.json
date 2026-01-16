@@ -1,0 +1,311 @@
+{
+  "version": "2.0",
+  "description": "Xfetch Pixel Studio - 完整素材定义",
+  "assets": {
+    "background": {
+      "file": "background.png",
+      "width": 1920,
+      "height": 700,
+      "description": "城市背景场景 - 公交站、道路、建筑群、树木、云朵"
+    },
+    "buildings": {
+      "file": "buildings.png",
+      "width": 800,
+      "height": 436,
+      "description": "分类建筑和公交站台",
+      "elements": {
+        "bus-empty": {
+          "x": 0, "y": 0,
+          "width": 280, "height": 200,
+          "description": "空载大巴侧视图 gemini-2.5-flash"
+        },
+        "bus-stop": {
+          "x": 0, "y": 220,
+          "width": 200, "height": 150,
+          "description": "公交站台候车亭"
+        },
+        "building-deep": {
+          "x": 320, "y": 0,
+          "width": 120, "height": 220,
+          "description": "DEEP 深度分析建筑 (蓝色)"
+        },
+        "building-lab": {
+          "x": 450, "y": 0,
+          "width": 120, "height": 220,
+          "description": "LAB 研究建筑 (紫色)"
+        },
+        "building-app": {
+          "x": 580, "y": 0,
+          "width": 120, "height": 220,
+          "description": "APP 应用建筑 (黄色)"
+        },
+        "building-tech": {
+          "x": 320, "y": 230,
+          "width": 120, "height": 200,
+          "description": "TECH 技术建筑 (蓝色)"
+        },
+        "building-tips": {
+          "x": 450, "y": 230,
+          "width": 120, "height": 200,
+          "description": "TIPS 技巧建筑 (粉色)"
+        },
+        "building-biz": {
+          "x": 580, "y": 230,
+          "width": 120, "height": 200,
+          "description": "BIZ 商业建筑 (黄色)"
+        }
+      }
+    },
+    "bus-states": {
+      "file": "bus-states.png",
+      "width": 600,
+      "height": 327,
+      "description": "大巴不同状态",
+      "elements": {
+        "bus-moving-empty": {
+          "x": 0, "y": 0,
+          "width": 300, "height": 160,
+          "description": "空车行驶中（带尾气）"
+        },
+        "bus-full": {
+          "x": 300, "y": 0,
+          "width": 300, "height": 160,
+          "description": "满载乘客"
+        },
+        "bus-angle-dust": {
+          "x": 0, "y": 165,
+          "width": 300, "height": 160,
+          "description": "斜角视图带灰尘"
+        },
+        "bus-dust-cloud": {
+          "x": 300, "y": 165,
+          "width": 300, "height": 160,
+          "description": "带大量灰尘"
+        }
+      }
+    },
+    "bus-animation": {
+      "file": "bus-animation.png",
+      "width": 800,
+      "height": 446,
+      "description": "大巴动画帧和乘客头像",
+      "elements": {
+        "bus-main": {
+          "x": 0, "y": 0,
+          "width": 350, "height": 200,
+          "description": "主大巴精灵 tweet bus（带可爱表情）"
+        },
+        "wheel-front": {
+          "x": 360, "y": 150,
+          "width": 50, "height": 50,
+          "description": "前轮"
+        },
+        "wheel-back": {
+          "x": 420, "y": 150,
+          "width": 50, "height": 50,
+          "description": "后轮"
+        },
+        "passengers": {
+          "x": 480, "y": 140,
+          "width": 320, "height": 60,
+          "frameWidth": 40,
+          "frameCount": 8,
+          "description": "8个乘客头像（不同肤色和发型）"
+        },
+        "bus-bounce-frames": {
+          "x": 0, "y": 280,
+          "width": 800,
+          "height": 150,
+          "frameWidth": 200,
+          "frameCount": 4,
+          "description": "大巴行驶动画4帧（带灰尘颠簸效果）"
+        }
+      }
+    },
+    "sprite-sheet-main": {
+      "file": "sprite-sheet-main.png",
+      "width": 1200,
+      "height": 669,
+      "description": "主精灵图 - 包含所有人物、UI、图标、特效",
+      "elements": {
+        "persons-row1": {
+          "x": 0, "y": 0,
+          "width": 220, "height": 55,
+          "frameWidth": 28,
+          "description": "第一排小人（灰色占位+4种肤色）"
+        },
+        "persons-row2": {
+          "x": 0, "y": 55,
+          "width": 220, "height": 55,
+          "frameWidth": 28,
+          "description": "第二排小人（不同衣服颜色）"
+        },
+        "persons-row3": {
+          "x": 0, "y": 110,
+          "width": 220, "height": 55,
+          "frameWidth": 28,
+          "description": "第三排小人（更多变体）"
+        },
+        "persons-rejected": {
+          "x": 0, "y": 165,
+          "width": 110, "height": 55,
+          "frameWidth": 28,
+          "description": "被拒绝小人（灰色）"
+        },
+        "conductor-poses": {
+          "x": 0, "y": 330,
+          "width": 180, "height": 70,
+          "frameWidth": 45,
+          "frameCount": 4,
+          "description": "审核员不同姿势"
+        },
+        "ui-review-stop": {
+          "x": 240, "y": 0,
+          "width": 150, "height": 80,
+          "description": "REVIEW STOP 面板"
+        },
+        "ui-sorting-hub": {
+          "x": 400, "y": 0,
+          "width": 150, "height": 80,
+          "description": "SORTING HUB 面板"
+        },
+        "ui-review-queue": {
+          "x": 240, "y": 85,
+          "width": 150, "height": 70,
+          "description": "REVIEW QUEUE 面板"
+        },
+        "ui-sorting-stats": {
+          "x": 400, "y": 85,
+          "width": 180, "height": 70,
+          "description": "SORTING HUB STATS 面板"
+        },
+        "ui-category-badges": {
+          "x": 590, "y": 0,
+          "width": 100, "height": 160,
+          "description": "分类徽章（NEWS/DEEP/BIZ + 计数）"
+        },
+        "close-button": {
+          "x": 690, "y": 0,
+          "width": 30, "height": 30,
+          "description": "关闭按钮X"
+        },
+        "bubble-ding": {
+          "x": 130, "y": 200,
+          "width": 50, "height": 30,
+          "description": "DING! 气泡"
+        },
+        "bubble-rumble": {
+          "x": 190, "y": 200,
+          "width": 70, "height": 30,
+          "description": "RUMBLE! 气泡"
+        },
+        "bubble-pop": {
+          "x": 270, "y": 200,
+          "width": 45, "height": 30,
+          "description": "POP! 气泡"
+        },
+        "tweet-bus": {
+          "x": 200, "y": 230,
+          "width": 220, "height": 140,
+          "description": "tweet bus 大巴（带可爱表情）"
+        },
+        "avatar-frames": {
+          "x": 700, "y": 100,
+          "width": 500, "height": 200,
+          "description": "头像区域（多排乘客头像）"
+        },
+        "special-assets": {
+          "x": 900, "y": 300,
+          "width": 280, "height": 150,
+          "description": "特殊资产：表情、水滴、爆米花等"
+        },
+        "icon-check": {
+          "x": 170, "y": 380,
+          "width": 30, "height": 30,
+          "description": "绿色勾图标"
+        },
+        "icon-cross": {
+          "x": 210, "y": 380,
+          "width": 30, "height": 30,
+          "description": "红色叉图标"
+        },
+        "icon-heart": {
+          "x": 130, "y": 380,
+          "width": 30, "height": 30,
+          "description": "红色爱心图标"
+        },
+        "smoke-effect": {
+          "x": 350, "y": 380,
+          "width": 200, "height": 60,
+          "frameWidth": 50,
+          "frameCount": 4,
+          "description": "烟雾特效4帧"
+        },
+        "dust-effect": {
+          "x": 260, "y": 380,
+          "width": 80, "height": 40,
+          "frameWidth": 20,
+          "frameCount": 4,
+          "description": "灰尘特效"
+        },
+        "progress-bar": {
+          "x": 0, "y": 480,
+          "width": 400, "height": 40,
+          "description": "LORD 进度条"
+        },
+        "category-buttons": {
+          "x": 0, "y": 530,
+          "width": 500, "height": 50,
+          "description": "分类按钮（彩色方块）"
+        }
+      }
+    },
+    "sprites-original": {
+      "file": "sprites.png",
+      "width": 640,
+      "height": 349,
+      "description": "原始精灵图（小人、审核员、图标基础版）"
+    }
+  },
+  "animations": {
+    "person-idle": {
+      "source": "sprite-sheet-main",
+      "frames": ["persons-row1"],
+      "duration": 1000,
+      "loop": true
+    },
+    "person-walk": {
+      "source": "sprite-sheet-main",
+      "frames": [0, 1, 2, 3],
+      "duration": 400,
+      "loop": true
+    },
+    "person-reject": {
+      "source": "sprite-sheet-main",
+      "element": "persons-rejected",
+      "duration": 300,
+      "loop": false
+    },
+    "conductor-stamp": {
+      "source": "sprite-sheet-main",
+      "element": "conductor-poses",
+      "frames": [0, 1, 2, 3],
+      "duration": 600,
+      "loop": false
+    },
+    "bus-drive": {
+      "source": "bus-animation",
+      "element": "bus-bounce-frames",
+      "frames": [0, 1, 2, 3],
+      "duration": 400,
+      "loop": true
+    },
+    "smoke": {
+      "source": "sprite-sheet-main",
+      "element": "smoke-effect",
+      "frames": [0, 1, 2, 3],
+      "duration": 400,
+      "loop": false
+    }
+  }
+}
