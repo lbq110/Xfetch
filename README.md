@@ -1,6 +1,6 @@
 # Xfetch
 
-AI 推文抓取与分析系统 - 从 Twitter List 抓取推文，自动筛选 AI 相关高价值内容，生成结构化报告。
+AI 推文抓取与分析系统 - 从 Twitter/X List 抓取推文，自动筛选 AI 相关高价值内容，生成结构化报告，并提供像素风格可视化界面。
 
 ## 功能特点
 
@@ -10,6 +10,7 @@ AI 推文抓取与分析系统 - 从 Twitter List 抓取推文，自动筛选 AI
 - **博主质量追踪**: 记录博主通过率，识别低质量信息源
 - **自动分类**: 将内容分类为时闻、技术技巧、深度解析等类别
 - **Markdown 报告**: 生成结构化的 Markdown 文件
+- **像素风可视化**: 实时展示推文处理流程的动画效果
 
 ## 系统架构
 
@@ -18,70 +19,258 @@ Pipeline v2:
 ┌─────────┐    ┌──────────────────┐    ┌────────────┐    ┌───────────┐
 │ Fetcher │ -> │ ContentAnalyzer  │ -> │ Classifier │ -> │ Generator │
 └─────────┘    └──────────────────┘    └────────────┘    └───────────┘
-     │                  │
-     v                  v
- state.json      processed_ids.json
-                 author_stats.json
+     │                  │                     │
+     v                  v                     v
+ state.json      processed_ids.json     事件文件 (.jsonl)
+                 author_stats.json           │
+                                             v
+                                      ┌─────────────┐
+                                      │ Visualizer  │
+                                      └─────────────┘
 ```
 
 ## 安装
 
 ```bash
 # 克隆仓库
-git clone https://github.com/YOUR_USERNAME/Xfetch.git
+git clone https://github.com/lbq110/Xfetch.git
 cd Xfetch
 
 # 安装依赖
 pip install -r requirements.txt
 
-# 复制配置文件模板
-cp config/fetcher.yaml.example config/fetcher.yaml
-cp config/content_analyzer.yaml.example config/content_analyzer.yaml
-cp config/classifier.yaml.example config/classifier.yaml
-cp config/generator.yaml.example config/generator.yaml
-
-# 编辑配置文件，填入你的 API Key 和 Twitter List ID
+# 额外依赖（如果缺少）
+pip install google-genai httpx loguru pyotp bs4 pyyaml
 ```
 
 ## 配置
 
-### Twitter 账户设置
-
-使用 [twscrape](https://github.com/vladkens/twscrape) 进行推文抓取，需要配置 Twitter 账户:
+### 第一步：复制配置文件模板
 
 ```bash
-# 添加账户（推荐使用 cookies 方式）
+cp config/fetcher.yaml.example config/fetcher.yaml
+cp config/content_analyzer.yaml.example config/content_analyzer.yaml
+cp config/classifier.yaml.example config/classifier.yaml
+cp config/generator.yaml.example config/generator.yaml
+```
+
+### 第二步：获取 Twitter List ID（F12 方法）
+
+1. 打开浏览器，登录 [Twitter/X](https://x.com)
+2. 进入你要抓取的 List 页面（例如：`https://x.com/i/lists/123456789`）
+3. 按 **F12** 打开开发者工具
+4. 切换到 **Network（网络）** 标签
+5. 在 Filter 中输入 `ListLatestTweetsTimeline`
+6. 刷新页面，找到对应的请求
+7. 在请求 URL 或 Payload 中找到 `listId`，类似：
+
+```
+https://x.com/i/api/graphql/.../ListLatestTweetsTimeline?variables={"listId":"2010759492212760999",...}
+```
+
+8. 复制这个数字 ID（如 `2010759492212760999`）到 `config/fetcher.yaml`：
+
+```yaml
+list_id: 2010759492212760999
+```
+
+**或者直接从 URL 获取**：
+- List 页面 URL 格式为 `https://x.com/i/lists/2010759492212760999`
+- 最后的数字就是 List ID
+
+### 第三步：获取 Twitter Cookies（F12 方法）
+
+由于 Twitter 的反爬机制，推荐使用 Cookies 方式认证（比账号密码更稳定）。
+
+1. 打开浏览器，登录 [Twitter/X](https://x.com)
+2. 按 **F12** 打开开发者工具
+3. 切换到 **Network（网络）** 标签
+4. 刷新页面，点击任意一个请求
+5. 在 **Headers** 中找到 **Request Headers**
+6. 找到 `Cookie:` 字段，复制整个 Cookie 值
+
+**重要的 Cookie 字段说明**：
+
+| Cookie 名 | 说明 | 必需 |
+|-----------|------|------|
+| `auth_token` | 登录认证 token | ✅ 必需 |
+| `ct0` | CSRF token | ✅ 必需 |
+| `twid` | 用户 ID | 推荐 |
+| `kdt` | 设备 token | 可选 |
+
+**最小 Cookie 示例**：
+```
+auth_token=abc123def456; ct0=xyz789abc
+```
+
+### 第四步：添加 Twitter 账户
+
+创建一个 Python 脚本或在终端运行：
+
+```python
+import asyncio
+import sys
+sys.path.insert(0, 'twscrape')
+from twscrape import API
+
+async def add_account():
+    api = API('accounts.db')
+
+    # 使用 Cookies 方式添加账户（推荐）
+    cookies = "auth_token=你的auth_token值; ct0=你的ct0值"
+
+    await api.pool.add_account(
+        username="你的用户名",      # Twitter 用户名
+        password="你的密码",        # Twitter 密码（可以随便填，用 cookies 时不验证）
+        email="你的邮箱",           # 注册邮箱（可以随便填）
+        email_password="邮箱密码",  # 邮箱密码（可以随便填）
+        cookies=cookies
+    )
+
+    print("账户添加成功！")
+
+asyncio.run(add_account())
+```
+
+**验证账户是否可用**：
+
+```bash
 python -c "
 import asyncio
+import sys
+sys.path.insert(0, 'twscrape')
 from twscrape import API
-api = API('accounts.db')
-asyncio.run(api.pool.add_account('username', 'password', 'email', 'email_password'))
-asyncio.run(api.pool.login_all())
+
+async def check():
+    api = API('accounts.db')
+    accounts = await api.pool.accounts_info()
+    for acc in accounts:
+        print(f'{acc.username}: active={acc.active}, logged_in={acc.logged_in}')
+
+asyncio.run(check())
 "
 ```
 
-### API Key 配置
+### 第五步：配置 Gemini API Key
 
-在 `config/content_analyzer.yaml` 和 `config/classifier.yaml` 中配置 Gemini API Key:
+在 `config/content_analyzer.yaml` 和 `config/classifier.yaml` 中配置：
 
 ```yaml
-gemini_api_key: YOUR_GEMINI_API_KEY
+gemini_api_key: 你的_GEMINI_API_KEY
 ```
+
+**获取 Gemini API Key**：
+1. 访问 [Google AI Studio](https://aistudio.google.com/apikey)
+2. 点击 "Create API Key"
+3. 复制生成的 Key
 
 ## 使用
 
+### 基本命令
+
 ```bash
-# 运行完整管道
+# 运行完整管道（抓取 + 分析 + 分类 + 生成报告）
 python run.py --run
 
-# 使用指定数据文件（跳过抓取）
-python run.py --input data/raw/xxx.json
+# 运行管道并生成可视化事件文件
+python run.py --run --emit-events
+
+# 使用指定数据文件（跳过抓取步骤）
+python run.py --input data/raw/2026-01-16_01.json
 
 # 查看博主质量报告
 python run.py --author-report
 
-# 指定最小推文数
+# 指定最小推文数的博主报告
 python run.py --author-report --min-tweets 5
+```
+
+### 可视化器
+
+可视化器提供像素风格的动画，展示推文处理流程：
+
+```bash
+# 启动本地服务器
+cd visualizer
+python -m http.server 8089
+
+# 访问 http://localhost:8089
+```
+
+**使用方法**：
+1. 点击 **LOAD** → **UPLOAD FILE**
+2. 选择 `data/events/` 目录下的 `.jsonl` 事件文件
+3. 点击 **PLAY** 开始播放
+
+**动画说明**：
+- 🚌 **大巴车**：载着推文（乘客）到达审核站
+- 👤 **乘客**：每个乘客代表一条推文
+- 🏢 **建筑**：不同分类的目的地（时闻、深度解析、技术技巧等）
+- ✅ 通过审核的推文会跳上大巴
+- ❌ 未通过的推文会消失
+
+## 配置文件详解
+
+### config/fetcher.yaml
+
+```yaml
+# 抓取模块配置
+list_id: YOUR_TWITTER_LIST_ID    # Twitter List ID
+max_tweets_per_run: 10           # 每次最多抓取数量
+db_path: accounts.db             # Twitter 账户数据库路径
+```
+
+### config/content_analyzer.yaml
+
+```yaml
+# 内容分析模块配置
+llm_provider: gemini
+llm_model: gemini-2.5-flash
+gemini_api_key: YOUR_GEMINI_API_KEY
+
+# 价值阈值 (1-10)，低于此分数的推文将被过滤
+value_threshold: 5
+
+# 博主统计配置
+author_stats:
+  min_tweets_for_report: 3       # 最少推文数才纳入统计
+  remove_threshold: 0.3          # 通过率低于此值建议移除
+  high_quality_threshold: 0.7    # 高于此值为高质量博主
+```
+
+### config/classifier.yaml
+
+```yaml
+# 分类模块配置
+llm_provider: gemini
+llm_model: gemini-2.5-flash
+gemini_api_key: YOUR_GEMINI_API_KEY
+
+# 分类体系
+categories:
+  - name: 时闻
+    emoji: "🔥"
+    description: AI领域的最新新闻、产品发布、重大事件
+
+  - name: 深度解析
+    emoji: "💡"
+    description: 对AI技术、趋势的深入分析和思考
+
+  - name: 技术技巧
+    emoji: "🛠"
+    description: 实用的AI工具使用技巧、代码教程
+
+  - name: 学术研究
+    emoji: "📚"
+    description: AI学术论文、研究成果
+
+  - name: 产品应用
+    emoji: "🎯"
+    description: AI产品的实际应用案例和体验
+
+  - name: 商业洞察
+    emoji: "💼"
+    description: AI商业模式、市场分析、投资机会
 ```
 
 ## 目录结构
@@ -97,20 +286,74 @@ Xfetch/
 │   ├── classified/        # 分类后的推文
 │   ├── rejected/          # 被过滤的推文
 │   ├── output/            # 生成的 Markdown
+│   ├── events/            # 可视化事件文件
 │   ├── state.json         # 抓取状态
 │   ├── author_stats.json  # 博主统计
 │   └── processed_ids.json # 已处理推文ID
 ├── modules/               # 核心模块
 │   ├── base.py           # 基类
 │   ├── fetcher.py        # 抓取模块
-│   ├── content_analyzer.py # 内容分析（合并 Filter + Evaluator）
+│   ├── content_analyzer.py # 内容分析
 │   ├── classifier.py     # 分类模块
-│   └── generator.py      # 报告生成
+│   ├── generator.py      # 报告生成
+│   └── event_emitter.py  # 事件发射器
+├── visualizer/            # 可视化界面
+│   ├── index.html        # 主页面
+│   ├── css/              # 样式文件
+│   ├── js/               # JavaScript 逻辑
+│   └── assets/           # 图片资源
 ├── twscrape/             # Twitter 抓取库
 ├── pipeline.py           # 管道调度器
 ├── run.py               # 入口脚本
 └── requirements.txt     # 依赖
 ```
+
+## 常见问题
+
+### Q: 抓取失败，提示 "No active accounts"
+
+**A**: 账户未正确添加或 Cookies 已过期。
+
+1. 检查账户状态：
+```bash
+python -c "
+import asyncio
+import sys
+sys.path.insert(0, 'twscrape')
+from twscrape import API
+asyncio.run(API('accounts.db').pool.accounts_info())
+"
+```
+
+2. 重新获取 Cookies 并添加账户
+
+### Q: Cookies 多久过期？
+
+**A**: Twitter Cookies 通常在 1-2 周后过期。如果抓取失败，请重新获取 Cookies。
+
+### Q: 如何获取更多 Cookies 字段？
+
+在 F12 的 Application（应用程序）标签中：
+1. 展开 **Cookies** → **https://x.com**
+2. 可以看到所有 Cookie 及其值
+3. 重点关注 `auth_token` 和 `ct0`
+
+### Q: 可视化器打不开？
+
+**A**: 确保在 `visualizer` 目录下启动服务器：
+```bash
+cd visualizer
+python -m http.server 8089
+```
+
+然后访问 `http://localhost:8089`
+
+### Q: Gemini API 报错？
+
+**A**: 检查以下几点：
+1. API Key 是否正确
+2. 是否在支持的地区（可能需要代理）
+3. 是否超出免费配额
 
 ## 博主质量报告示例
 
@@ -130,6 +373,14 @@ Xfetch/
 ⚠️ 建议移除的博主:
   @spammer123    通过率:0%   近期平均:1.0
 ```
+
+## 技术栈
+
+- **后端**: Python 3.10+, asyncio
+- **AI**: Google Gemini API
+- **抓取**: twscrape (Twitter GraphQL API)
+- **前端**: 原生 JavaScript, CSS 像素动画
+- **数据**: JSON, JSONL
 
 ## License
 
